@@ -47,4 +47,6 @@ vo.tabstop = 4
 vo.shiftwidth = 4
 vo.softtabstop = 4
 
--- require("dap").setup()
+require("functions.go.functions").attach_to_buffer(
+  vim.api.nvim_get_current_buf(), { "go", "test", "./...", "-json" }
+)
