@@ -54,16 +54,6 @@ function M.attach_to_buffer(bufnr, command)
     tests = {},
   }
 
-  vim.api.nvim_buf_create_user_command(bufnr, "GoTestLineDiag", function()
-    local line = vim.fn.line "." - 1
-    for _, test in pairs(state.tests) do
-      if test.line == line then
-        vim.cmd.new()
-        vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), 0, -1, false, test.output)
-      end
-    end
-  end, {})
-
   vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
   state = {
     bufnr = bufnr,
@@ -75,7 +65,6 @@ function M.attach_to_buffer(bufnr, command)
       if not data then
         return
       end
-
       local index = 1
       for _, line in ipairs(data) do
         local decoded = vim.json.decode(line)
@@ -122,7 +111,7 @@ function M.attach_to_buffer(bufnr, command)
               severity = vim.diagnostic.severity.ERROR,
               source = "go-test",
               message = "Failed: " .. test.output[1],
-              user_data = test.output,
+              user_data = {},
             })
           end
         end
