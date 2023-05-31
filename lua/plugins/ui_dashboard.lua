@@ -136,6 +136,14 @@ return {
               key = "q",
             },
             {
+              icon = " ",
+              icon_hl = "@variable",
+              desc = "Projects",
+              group = "Label",
+              action = "Telescope projects",
+              key = "p",
+            },
+            {
               desc = " Apps",
               group = "DiagnosticHint",
               action = "Telescope app",

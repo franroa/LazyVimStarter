@@ -1,4 +1,4 @@
-vim.api.nvim_set_hl(0, 'Error', { fg = "#00FF00" })
+vim.api.nvim_set_hl(0, 'TEST_PASSED', { fg = "#00FF00" })
 
 local test_function_query_string = [[
 (
@@ -86,7 +86,7 @@ function M.attach_to_buffer(bufnr, command)
           end
           local test = state.tests[index]
           if test.success == "true" then
-            local text = { "    ✓ Passed", "Error" }
+            local text = { "    ✓ Passed", "TEST_PASSED" }
             vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
               virt_text = { text },
               hl_group = "Error",

@@ -1,6 +1,52 @@
 return { {
   "neovim/nvim-lspconfig",
   opts = {
+    ensure_installed = {
+      "helm-ls",
+      "gopls",
+      "jsonls",
+      "lua_ls",
+      "golangci_lint_ls ",
+    },
+    automatic_installation = true,
+    servers = {
+      gopls = {
+        settings = {
+          gopls = {
+            analyses = {
+              unusedparams = true,
+            },
+            hints = {
+              assignVariableTypes = true,
+              compositeLiteralFields = true,
+              compositeLiteralTypes = true,
+              constantValues = true,
+              functionTypeParameters = true,
+              parameterNames = true,
+              rangeVariableTypes = true,
+            },
+            staticcheck = true,
+            semanticTokens = true,
+          },
+        },
+      },
+      golangci_lint_ls = {},
+      jsonls = {},
+      lua_ls = {
+        -- mason = false, -- set to false if you don't want this server to be installed with mason
+        settings = {
+          Lua = {
+            workspace = {
+              checkThirdParty = false,
+            },
+            completion = {
+              callSnippet = "Replace",
+            },
+          },
+        },
+      },
+      helm_ls = {},
+    },
     -- add any global capabilities here
     capabilities = {
       textDocument = {
@@ -14,6 +60,27 @@ return { {
     flags = {
       debounce_text_changes = 150,
     },
+    --     -- setup = {
+    --     -- gopls = function(_, _)
+    --     --   local lsp_utils = require("lazyvim.util")
+    --     --   lsp_utils.on_attach(function(client, bufnr)
+    --     --     local map = function(mode, lhs, rhs, desc)
+    --     --       if desc then
+    --     --         desc = desc
+    --     --       end
+    --     --       vim.keymap.set(mode, lhs, rhs, { silent = true, desc = desc, buffer = bufnr, noremap = true })
+    --     --     end
+    --     --     -- stylua: ignore
+    --     --     if client.name == "gopls" then
+    --     --       map("n", "<leader>ly", "<cmd>GoModTidy<cr>", "Go Mod Tidy")
+    --     --       map("n", "<leader>lc", "<cmd>GoCoverage<Cr>", "Go Test Coverage")
+    --     --       map("n", "<leader>lt", "<cmd>GoTest<Cr>", "Go Test")
+    --     --       map("n", "<leader>lR", "<cmd>GoRun<Cr>", "Go Run")
+    --     --       map("n", "<leader>dT", "<cmd>lua require('dap-go').debug_test()<cr>", "Go Debug Test")
+    --     --     end
+    --     --   end)
+    --     -- end,
+    --     -- },
   },
 } }
 

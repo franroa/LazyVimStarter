@@ -16,6 +16,15 @@ vim.api.nvim_create_autocmd("VimLeave", {
   end,
 })
 
+vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
+  group = augroup("teej-automagic"),
+  pattern = "*.go",
+  callback = function()
+    require("functions.go.functions").attach_to_buffer(vim.api.nvim_get_current_buf(), { "go", "test", "./...", "-json" })
+  end
+})
+
+
 -- vim.api.nvim_create_autocmd("BufRead", {
 --   pattern = "*/.git/COMMIT_EDITMSG",
 --   callback = function()
@@ -36,6 +45,11 @@ vim.api.nvim_create_autocmd("VimLeave", {
 --       vim.fn.setline(lnum, vim.fn.substitute(vim.fn.getline(lnum), "${COMMIT_TITLE}", context["COMMIT_TITLE"], "g"))
 --       vim.fn.setline(lnum, vim.fn.substitute(vim.fn.getline(lnum), "${BRANCH_NAME}", context["BRANCH_NAME"], "g"))
 --       vim.fn.setline(lnum, vim.fn.substitute(vim.fn.getline(lnum), "${AUTHOR}", context["AUTHOR"], "g"))
+--       vim.fn.setline(lnum, vim.fn.substitute(vim.fn.getline(lnum), "${JIRA_TICKET}", context["JIRA_TICKET"], "g"))
+--       lnum = vim.fn.nextnonblank(lnum + 1)
+--     end
+--   end,
+-- })
 --       vim.fn.setline(lnum, vim.fn.substitute(vim.fn.getline(lnum), "${JIRA_TICKET}", context["JIRA_TICKET"], "g"))
 --       lnum = vim.fn.nextnonblank(lnum + 1)
 --     end

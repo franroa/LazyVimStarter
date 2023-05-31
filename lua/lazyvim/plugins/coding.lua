@@ -5,7 +5,7 @@ return {
     "L3MON4D3/LuaSnip",
     build = (not jit.os:find("Windows"))
         and "echo -e 'NOTE: jsregexp is optional, so not a big deal if it fails to build\n'; make install_jsregexp"
-      or nil,
+        or nil,
     dependencies = {
       "rafamadriz/friendly-snippets",
       config = function()
@@ -23,9 +23,11 @@ return {
         function()
           return require("luasnip").jumpable(1) and "<Plug>luasnip-jump-next" or "<tab>"
         end,
-        expr = true, silent = true, mode = "i",
+        expr = true,
+        silent = true,
+        mode = "i",
       },
-      { "<tab>", function() require("luasnip").jump(1) end, mode = "s" },
+      { "<tab>",   function() require("luasnip").jump(1) end,  mode = "s" },
       { "<s-tab>", function() require("luasnip").jump(-1) end, mode = { "i", "s" } },
     },
   },
@@ -106,12 +108,12 @@ return {
       local plugin = require("lazy.core.config").spec.plugins["mini.surround"]
       local opts = require("lazy.core.plugin").values(plugin, "opts", false)
       local mappings = {
-        { opts.mappings.add, desc = "Add surrounding", mode = { "n", "v" } },
-        { opts.mappings.delete, desc = "Delete surrounding" },
-        { opts.mappings.find, desc = "Find right surrounding" },
-        { opts.mappings.find_left, desc = "Find left surrounding" },
-        { opts.mappings.highlight, desc = "Highlight surrounding" },
-        { opts.mappings.replace, desc = "Replace surrounding" },
+        { opts.mappings.add,            desc = "Add surrounding",                     mode = { "n", "v" } },
+        { opts.mappings.delete,         desc = "Delete surrounding" },
+        { opts.mappings.find,           desc = "Find right surrounding" },
+        { opts.mappings.find_left,      desc = "Find left surrounding" },
+        { opts.mappings.highlight,      desc = "Highlight surrounding" },
+        { opts.mappings.replace,        desc = "Replace surrounding" },
         { opts.mappings.update_n_lines, desc = "Update `MiniSurround.config.n_lines`" },
       }
       mappings = vim.tbl_filter(function(m)
@@ -121,12 +123,12 @@ return {
     end,
     opts = {
       mappings = {
-        add = "gza", -- Add surrounding in Normal and Visual modes
-        delete = "gzd", -- Delete surrounding
-        find = "gzf", -- Find surrounding (to the right)
-        find_left = "gzF", -- Find surrounding (to the left)
-        highlight = "gzh", -- Highlight surrounding
-        replace = "gzr", -- Replace surrounding
+        add = "gza",            -- Add surrounding in Normal and Visual modes
+        delete = "gzd",         -- Delete surrounding
+        find = "gzf",           -- Find surrounding (to the right)
+        find_left = "gzF",      -- Find surrounding (to the left)
+        highlight = "gzh",      -- Highlight surrounding
+        replace = "gzr",        -- Replace surrounding
         update_n_lines = "gzn", -- Update `n_lines`
       },
     },

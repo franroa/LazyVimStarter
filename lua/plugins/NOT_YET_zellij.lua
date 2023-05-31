@@ -1,6 +1,6 @@
 return {
   {
-    "vim-test/vim-test",
+    "Lilja/zellij.nvim",
     lazy = false,
-  },
+  }
 }

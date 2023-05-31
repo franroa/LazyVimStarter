@@ -10,10 +10,10 @@ function _G.set_terminal_keymaps()
 end
 
 function OpenOrCreateTerminal(opts)
-  local namespace = vim.fn.system("echo -n $(kubie info ns 2>1)")
+  local namespace = vim.fn.system("echo -n $(kubie info ns 2>/dev/null)")
   local new_name = opts.name
   local display_name = "normal"
-  if namespace ~= "" and opts.name ~= "k9s" then
+  if namespace ~= "" and opts.name ~= "k9s" or opts.non_k8s ~= false then
     new_name = "(" .. namespace .. ") " .. opts.name
     display_name = "kubernetes"
   end
@@ -33,7 +33,7 @@ function OpenOrCreateTerminal(opts)
   end
 
   local Terminal = require('toggleterm.terminal').Terminal
-  local context = vim.fn.system('echo -n "$(kubectl config current-context 2>1)"')
+  local context = vim.fn.system('echo -n "$(kubectl config current-context 2>/dev/null)"')
 
   if context ~= "" then
     context = string.format(
@@ -43,8 +43,14 @@ function OpenOrCreateTerminal(opts)
     )
   end
 
+  for _, bufnr in pairs(vim.api.nvim_list_bufs()) do
+    if string.find(vim.api.nvim_buf_get_name(bufnr), new_name) then
+      vim.api.nvim_buf_delete(bufnr, {})
+      break
+    end
+  end
   local customTerminal = Terminal:new({
-    on_open = function(term)
+    on_create = function(term)
       term.name = new_name
       vim.api.nvim_buf_set_name(term.bufnr, new_name)
     end,
