@@ -4,12 +4,47 @@ return { {
     ensure_installed = {
       "helm-ls",
       "gopls",
+      "dockerls",
+      "bashls",
+      "awk_ls",
       "jsonls",
+      "emmet_ls",
+      "marksman",
+      "gradle_ls",
       "lua_ls",
       "golangci_lint_ls ",
     },
     automatic_installation = true,
     servers = {
+      html = {
+        filetypes = { "html", "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact",
+          "typescript.tsx" },
+      },
+      -- Emmet
+      emmet_ls = {
+        init_options = {
+          html = {
+            options = {
+              -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
+              ["bem.enabled"] = true,
+            },
+          },
+        },
+      },
+      -- CSS
+      cssls = {},
+      gradle_ls = {
+        cmd = {
+          vim.env.HOME
+          ..
+          "/.local/share/nvim/vscode-gradle/gradle-language-server/build/install/gradle-language-server/bin/gradle-language-server",
+        },
+        root_dir = function(fname)
+          return util.root_pattern(unpack { "settings.gradle", "settings.gradle.kts" })(fname)
+              or util.root_pattern(unpack { "build.gradle" })(fname)
+        end,
+        filetypes = { "groovy", "kotlin" },
+      },
       gopls = {
         settings = {
           gopls = {

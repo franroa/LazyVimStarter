@@ -9,6 +9,7 @@ return {
         "shellcheck",
         "shfmt",
         "flake8",
+        "prettierd",
         -- "jdtls", "java-debug-adapter", "java-test", "google-java-format", -- JAVA
       },
     },

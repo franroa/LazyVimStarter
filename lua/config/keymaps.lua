@@ -28,4 +28,5 @@ map("n", 'i', function()
     return "i"
   end
 end, { expr = true })
-map("n", ",t", ">gv", { desc = "indent with >" })
+
+map("n", "<leader>p", "<cmd>Telescope projects<cr>", { desc = "Telescope Projects" })
