@@ -53,8 +53,8 @@ return {
     "jose-elias-alvarez/null-ls.nvim",
     opts = function(_, opts)
       opts.sources = {
-        cspell.diagnostics.with({ config = config }),
-        cspell.code_actions.with({ config = config }),
+        -- cspell.diagnostics.with({ config = config }),
+        -- cspell.code_actions.with({ config = config }),
         require("null-ls").builtins.formatting.shfmt,        -- shell script formatting
         require("null-ls").builtins.formatting.prettier,     -- markdown formatting
         require("null-ls").builtins.formatting.shellharden,  -- markdown formatting
