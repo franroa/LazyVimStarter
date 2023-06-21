@@ -194,6 +194,7 @@ local function change_namespace()
     select_prompt = "select namespace",
     fun = function(ns)
       vim.cmd("!kubectl config set-context --current --namespace " .. ns);
+      require("functions.winbar").UpdateDevIconsInDropbar()
       require("functions.winbar").Redraw()
     end
   })
@@ -252,6 +253,7 @@ return {
               if GetK8sContext() ~= "__None__" then
                 change_namespace()
               else
+                require("functions.winbar").UpdateDevIconsInDropbar()
                 require("functions.winbar").Redraw()
               end
             end

@@ -3,11 +3,18 @@ if vim.g.vira_active_issue == "None" then
   vim.notify("No Jira Ticket defined", "ERROR")
 end
 
+local issue = ""
+if vim.g.VIRA_ISSUE == nil then
+  issue = "None"
+else
+  issue = vim.g.VIRA_ISSUE
+end
+
 local context = {
-  COMMIT_TITLE = vim.g.vira_active_issue,
+  COMMIT_TITLE = issue,
   BRANCH_NAME = vim.fn.system("echo -n $(git branch --show-current)"),
   AUTHOR = "Francisco Roa Prieto",
-  JIRA_TICKET = vim.g.vira_active_issue,
+  JIRA_TICKET = issue,
 }
 local lnum = vim.fn.nextnonblank(1)
 

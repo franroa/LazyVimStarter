@@ -45,6 +45,15 @@ return {
   },
   {
     "telescope.nvim",
+    dependencies = {
+      "ecthelionvi/NeoComposer.nvim",
+      config = function()
+        require("telescope").load_extension("macros")
+      end,
+    },
+  },
+  {
+    "telescope.nvim",
     event = "TermOpen",
     dependencies = {
       "tknightz/telescope-termfinder.nvim",

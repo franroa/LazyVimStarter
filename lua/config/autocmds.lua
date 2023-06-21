@@ -16,13 +16,13 @@ vim.api.nvim_create_autocmd("VimLeave", {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
-  group = augroup("teej-automagic"),
-  pattern = "*.go",
-  callback = function()
-    require("functions.go.functions").attach_to_buffer(vim.api.nvim_get_current_buf(), { "go", "test", "./...", "-json" })
-  end
-})
+-- vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
+--   group = augroup("teej-automagic"),
+--   pattern = "*.go",
+--   callback = function()
+--     require("functions.go.functions").attach_to_buffer(vim.api.nvim_get_current_buf(), { "go", "test", "./...", "-json" })
+--   end
+-- })
 
 
 -- vim.api.nvim_create_autocmd("BufRead", {
@@ -55,3 +55,22 @@ vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
 --     end
 --   end,
 -- })
+--
+
+
+
+-- Automatically enter in insert mode
+-- vim.g.previous_window = -1
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
+  pattern = "*",
+  callback = function()
+    if vim.bo.filetype == 'toggleterm' then
+      -- if vim.g.previous_window ~= vim.api.nvim_win_get_number(0) then
+      vim.cmd("startinsert")
+      --   end
+      --   vim.g.previous_window = vim.api.nvim_win_get_number(0)
+      -- else
+      --   vim.g.previous_window = -1
+    end
+  end
+})

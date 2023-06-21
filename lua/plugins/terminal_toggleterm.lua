@@ -1,12 +1,23 @@
-function _G.set_terminal_keymaps()
-  local opts = { buffer = 0 }
-  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
-  vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
-  vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
-  vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
-  vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
-  vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
-  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+local split = require("functions.utils").split
+function GetAllTerminals()
+  return require('toggleterm.terminal').get_all(true)
+end
+
+function GetTerminalByName(name)
+  local terms_table = require('toggleterm.terminal').get_all(true)
+  for _, term in pairs(terms_table) do
+    if term.name == name then
+      return term
+    end
+  end
+  return nil
+end
+
+function GetCurrentTerminal()
+  local buf_name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+  local term_name = "(" .. split(buf_name, "(")[2]
+
+  return GetTerminalByName(term_name)
 end
 
 function OpenOrCreateTerminal(opts)
@@ -22,26 +33,22 @@ function OpenOrCreateTerminal(opts)
     display_name = "k9s"
   end
 
-  local terms_table = require('toggleterm.terminal').get_all(true)
-  for _, term in pairs(terms_table) do
-    if term.name == new_name then
-      vim.notify("There is already a terminal with that name!", "warning")
-      require('toggleterm').toggle_all('close')
-      term:toggle()
-      return
+  local term = GetTerminalByName(new_name)
+  if term ~= nil then
+    vim.notify("There is already a terminal with that name!", "warning")
+    for _, other_term in pairs(GetAllTerminals()) do
+      if term.name ~= other_term.name then
+        term:close()
+      end
     end
+    if term:is_open() == false then
+      term:toggle()
+    end
+    term:focus()
+    return term
   end
 
   local Terminal = require('toggleterm.terminal').Terminal
-  local context = vim.fn.system('echo -n "$(kubectl config current-context 2>/dev/null)"')
-
-  if context ~= "" then
-    context = string.format(
-      "kubie ctx -n %s %s && ",
-      namespace,
-      context
-    )
-  end
 
   for _, bufnr in pairs(vim.api.nvim_list_bufs()) do
     if string.find(vim.api.nvim_buf_get_name(bufnr), new_name) then
@@ -49,12 +56,16 @@ function OpenOrCreateTerminal(opts)
       break
     end
   end
+
+  local cmd = "CLUSTER=" .. vim.g.kubernetes_cluster .. " NAMESPACE=" .. vim.g.kubernetes_namespace .. " " ..
+      opts.instruction
+
   local customTerminal = Terminal:new({
     on_create = function(term)
       term.name = new_name
       vim.api.nvim_buf_set_name(term.bufnr, new_name)
     end,
-    cmd = context .. opts.instruction,
+    cmd = cmd,
     direction = opts.direction == nil and 'horizontal' or opts.direction,
     hidden = false,
     close_on_exit = false,
@@ -63,7 +74,6 @@ function OpenOrCreateTerminal(opts)
   })
   customTerminal:toggle()
   return customTerminal
-  -- require("telescope._extensions.termfinder.actions").fran_rename_term(lazygit.bufnr, lazygit.id, name)
 end
 
 return {
@@ -76,35 +86,35 @@ return {
         "folke/which-key.nvim",
         opts = function(_, opts)
           if require("lazyvim.util").has("noice.nvim") then
-            opts.defaults["<leader>t"] = { name = "+terminal" }
-            opts.defaults["<leader>tf"] = { name = "+format" }
+            opts.defaults["<leader>ft"] = { name = "+terminal" }
+            opts.defaults["<leader>ftf"] = { name = "+format" }
           end
         end,
       },
     },
     keys = {
       {
-        "<leader>td",
+        "<leader>ftd",
         function() OpenOrCreateTerminal({ instruction = "lazydocker", name = 'lazydocker', direction = 'tab' }) end,
         desc = "lazydocker"
       },
       {
-        "<leader>tc",
+        "<leader>ftc",
         function() OpenOrCreateTerminal({ instruction = "ctop", name = 'ctop', direction = 'tab' }) end,
         desc = "ctop"
       },
       {
-        "<leader>tg",
+        "<leader>ftg",
         function() OpenOrCreateTerminal({ instruction = "gitlab-ci-local", name = 'gitlab-local', direction = 'float' }) end,
         desc = "gitlab local"
       },
       {
-        "<leader>ts",
+        "<leader>fts",
         "<cmd>Telescope termfinder<cr>",
         desc = "Search terms"
       },
       {
-        "<leader>tta",
+        "<leader>ftta",
         function()
           -- local bufnr = vim.api.nvim_get_current_buf()
           -- local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
@@ -122,7 +132,7 @@ return {
         desc = "toggle all"
       },
       {
-        "<leader>tt",
+        "<leader>ftt",
         function()
           local bufnr = vim.api.nvim_get_current_buf()
           local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
@@ -140,20 +150,17 @@ return {
         desc = "toggle current terminal"
       },
       {
-        "<leader>tn",
+        "<leader>ftn",
         function()
-          local Terminal = require('toggleterm.terminal').Terminal
-          local lazygit  = Terminal:new({
-            direction = "horizontal",
-            hidden = true,
-            close_on_exit = false
+          ExecuteFunctionFromInput({
+            prompt = "Terminal Name",
+            fun = function(name) OpenOrCreateTerminal({ instruction = vim.o.shell, name = name }) end
           })
-          lazygit:toggle()
         end,
         desc = "open new terminal"
       },
       {
-        "<leader>tfh",
+        "<leader>ftfh",
         function()
           for _, win in ipairs(vim.api.nvim_list_wins()) do
             local bufnr = vim.api.nvim_win_get_buf(win)
@@ -174,7 +181,7 @@ return {
         desc = "toggle all to horizontal"
       },
       {
-        "<leader>tff",
+        "<leader>ftff",
         function()
           for _, win in ipairs(vim.api.nvim_list_wins()) do
             local bufnr = vim.api.nvim_win_get_buf(win)
@@ -195,7 +202,7 @@ return {
         desc = "toggle all to float"
       },
       {
-        "<leader>tf1",
+        "<leader>ftf1",
         function()
           --
           -- TODO make it working with many buffers!
