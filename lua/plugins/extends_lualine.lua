@@ -1,5 +1,8 @@
 function neocomposer()
-  return "Hola"
+  if vim.g.VIRA_ISSUE then
+    return vim.g.VIRA_ISSUE
+  end
+  return ""
 end
 
 return {
