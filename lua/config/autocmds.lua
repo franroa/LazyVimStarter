@@ -13,28 +13,28 @@ vim.api.nvim_create_autocmd("VimLeave", {
   end,
 })
 
--- vim.api.nvim_create_autocmd("WinLeave", {
---   pattern = "*",
---   callback = function()
---     if vim.bo.filetype == "gitcommit" and vim.g.is_lazygit_opened then
---       term = GetTerminalByName("(default) lazygit")
---       term:toggle()
---     end
---
---     if vim.bo.filetype == "vira_menu" then
---       vim.g.is_comming_from_vira = true
---     end
---   end,
--- })
---
--- vim.api.nvim_create_autocmd("BufLeave", {
---   pattern = "*",
---   callback = function()
---     if vim.bo.filetype == "toggleterm" then
---       vim.g.previous_terminal = GetCurrentTerminal()
---     end
---   end,
--- })
+vim.api.nvim_create_autocmd("WinLeave", {
+  pattern = "*",
+  callback = function()
+    if vim.bo.filetype == "gitcommit" and vim.g.is_lazygit_opened then
+      term = GetTerminalByName("(default) lazygit")
+      term:toggle()
+    end
+
+    if vim.bo.filetype == "vira_menu" then
+      vim.g.is_comming_from_vira = true
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufLeave", {
+  pattern = "*",
+  callback = function()
+    if vim.bo.filetype == "toggleterm" then
+      vim.g.previous_terminal = GetCurrentTerminal()
+    end
+  end,
+})
 
 vim.api.nvim_create_autocmd("BufEnter", {
   pattern = "*",
