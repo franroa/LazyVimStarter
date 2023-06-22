@@ -1,4 +1,4 @@
--- TODO install FixCursorHold: https://github.com/nvim-neotest/neotest#introduction
+-- TODO: install FixCursorHold: https://github.com/nvim-neotest/neotest#introduction
 --
 --
 

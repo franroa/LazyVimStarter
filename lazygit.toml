@@ -3,7 +3,7 @@ os:
   editCommandTemplate: "{{editor}} --remote-send '<C-\\><C-n>:5ToggleTerm<CR>:lua Edit({{filename}}, {{line}})<CR>'"
 git:
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium --oneline {{branchName}} --"
-  # commitPrefixes: # TODO
+  # commitPrefixes: # TODO:
   #   my_project: # This is repository folder name
   #     pattern: "^\\w+\\/(\\w+-\\w+).*"
   #     replace: '[$1] '

@@ -29,4 +29,12 @@ map("n", 'i', function()
   end
 end, { expr = true })
 
-map("n", "<leader>p", "<cmd>Telescope projects<cr>", { desc = "Telescope Projects" })
+map("i", "<A-i>", function()
+  vim.cmd("/^$")
+  vim.cmd.stopinsert()
+end)
+map("n", "<A-i>", function()
+  vim.cmd(":0")
+  vim.cmd("/]:")
+  vim.cmd("startinsert!")
+end)

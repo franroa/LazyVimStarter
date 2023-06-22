@@ -1,4 +1,4 @@
--- TODO check https://www.lazyvim.org/configuration/recipes#supertab
+-- TODO:check https://www.lazyvim.org/configuration/recipes#supertab
 return {
   {
     "abecodes/tabout.nvim",

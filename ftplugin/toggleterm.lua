@@ -6,7 +6,7 @@ local function map(mode, lhs, rhs, opts)
     vim.keymap.set(mode, lhs, rhs, opts)
   end
 end
-
+map('t', '<esc>', [[<C-\><C-n>]])
 map('t', '<esc>', [[<C-\><C-n>]])
 map('t', 'jk', [[<C-\><C-n>]])
 map('t', '<C-h>', [[<Cmd>wincmd h<CR>]])
@@ -16,7 +16,7 @@ map('t', '<C-l>', [[<Cmd>wincmd l<CR>]])
 map('t', '<C-w>', [[<C-\><C-n><C-w>]])
 
 -- Commit
-map('t', '<A-c>', function()
+map({ 't', 'n' }, '<A-c>', function()
   term = GetCurrentTerminal()
   if term ~= nil then
     term:toggle()
@@ -24,20 +24,19 @@ map('t', '<A-c>', function()
 
   vim.g.is_lazygit_opened = true
   vim.cmd("Git commit")
-
-  -- TODO:
-  -- if term ~= nil then
-  --   term:toggle()
-  -- end
 end)
 
--- Quit terminal: TODO make it gracefully
-map('t', '<C-q>', function()
+map({ 't', 'n' }, '<A-s>', function()
+  vim.cmd("Telescope termfinder")
+end)
+
+-- Quit terminal: TODO: make it gracefully
+map({ 't', 'n' }, '<A-q>', function()
   GetCurrentTerminal():shutdown()
 end)
 
 -- Hover current terminal
-map('t', '<C-o>', function()
+map({ 't', 'n' }, '<A-h>', function()
   local current_term = GetCurrentTerminal()
   for _, term in pairs(GetAllTerminals()) do
     if term.name ~= current_term.name then
@@ -46,8 +45,20 @@ map('t', '<C-o>', function()
   end
 end)
 
+-- -- Get Previous Terminal
+map({ 't', 'n' }, '<A-o>', function()
+  if vim.g.previous_terminal then
+    term = GetTerminalByName(vim.g.previous_terminal.name)
+    if term:is_open() then
+      term:focus()
+      return
+    end
+    term:toggle()
+  end
+end)
+
 -- Hide all terminals
-map('t', '<C-T>', function()
+map({ 't', 'n' }, '<A-t>', function()
   for _, term in pairs(GetAllTerminals()) do
     term:close()
   end
@@ -59,15 +70,17 @@ map('t', '<C-t>', function()
 end)
 
 -- Open new terminal
-map('t', '<C-n>', function()
+map({ 't', 'n' }, '<A-n>', function()
   ExecuteFunctionFromInput({
     prompt = "Terminal Name",
-    fun = function(name) OpenOrCreateTerminal({ instruction = vim.o.shell, name = name }) end
+    fun = function(name)
+      OpenOrCreateTerminal({ instruction = vim.o.shell, name = name })
+    end
   })
 end)
 
 -- Format current terminal
-map('t', '<C-f>', function()
+map({ 't', 'n' }, '<A-f>', function()
   local term = GetCurrentTerminal()
   if term.direction == "horizontal" then
     term.direction = "float"
@@ -78,5 +91,3 @@ map('t', '<C-f>', function()
   term:close()
   term:toggle()
 end)
-
--- TODO create prev and next

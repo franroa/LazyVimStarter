@@ -227,7 +227,7 @@ return {
         "<leader>ftf1",
         function()
           --
-          -- TODO make it working with many buffers!
+          -- TODO: make it working with many buffers!
           local bufnr = vim.api.nvim_get_current_buf()
           local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
 

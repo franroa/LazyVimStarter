@@ -1,5 +1,5 @@
--- TODO Add laguage dynamically: see https://alpha2phi.medium.com/neovim-pde-java-97aeda910c3a
--- TODO https://github.com/mfussenegger/nvim-jdtls/wiki/Sample-Configurations
+-- TODO: Add laguage dynamically: see https://alpha2phi.medium.com/neovim-pde-java-97aeda910c3a
+-- TODO: https://github.com/mfussenegger/nvim-jdtls/wiki/Sample-Configurations
 
 local function get_jdtls()
   local mason_registry = require "mason-registry"
