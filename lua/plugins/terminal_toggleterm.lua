@@ -66,6 +66,11 @@ function OpenOrCreateTerminal(opts)
       vim.api.nvim_buf_set_name(term.bufnr, new_name)
     end,
     cmd = cmd,
+    float_opts = {
+      border = "double",
+      width = function() return vim.o.columns end,
+      height = function() return vim.o.lines end
+    },
     direction = opts.direction == nil and 'horizontal' or opts.direction,
     hidden = false,
     close_on_exit = false,
@@ -93,6 +98,23 @@ return {
       },
     },
     keys = {
+      {
+        "<leader>ftl",
+        function()
+          local lg_cmd = "lazygit -w $PWD"
+          if vim.v.servername ~= nil then
+            lg_cmd = string.format(
+              "NVIM_SERVER=%s lazygit -ucf ~/.config/nvim/lazygit.toml -w $PWD",
+              vim.v.servername)
+          end
+
+          -- TODO: https://github.com/mhinz/neovim-remote
+          -- vim.env.GIT_EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
+
+          OpenOrCreateTerminal({ instruction = lg_cmd, name = 'lazygit', direction = 'float' })
+        end,
+        desc = "lazygit"
+      },
       {
         "<leader>ftd",
         function() OpenOrCreateTerminal({ instruction = "lazydocker", name = 'lazydocker', direction = 'tab' }) end,

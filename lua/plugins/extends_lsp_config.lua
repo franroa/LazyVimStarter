@@ -1,6 +1,7 @@
 return { {
   "neovim/nvim-lspconfig",
   opts = {
+    inlay_hints = { enabled = true },
     ensure_installed = {
       "helm-ls",
       "gopls",

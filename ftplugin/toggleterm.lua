@@ -15,6 +15,19 @@ map('t', '<C-k>', [[<Cmd>wincmd k<CR>]])
 map('t', '<C-l>', [[<Cmd>wincmd l<CR>]])
 map('t', '<C-w>', [[<C-\><C-n><C-w>]])
 
+-- Commit
+map('t', '<A-c>', function()
+  term = GetCurrentTerminal()
+  if term ~= nil then
+    term:toggle()
+  end
+
+  vim.cmd("Git commit")
+
+  if term ~= nil then
+    term:toggle()
+  end
+end)
 
 -- Quit terminal: TODO make it gracefully
 map('t', '<C-q>', function()
