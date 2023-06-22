@@ -22,6 +22,7 @@ map('t', '<A-c>', function()
     term:toggle()
   end
 
+  vim.g.is_lazygit_opened = true
   vim.cmd("Git commit")
 
   -- TODO:

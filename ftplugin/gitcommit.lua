@@ -1,5 +1,3 @@
-vim.cmd("startinsert")
-
 -- Git commit Jira Ticket
 if vim.g.vira_active_issue == "None" then
   vim.notify("No Jira Ticket defined", "ERROR")

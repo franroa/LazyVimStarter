@@ -16,6 +16,47 @@ vim.api.nvim_create_autocmd("VimLeave", {
   end,
 })
 
+vim.api.nvim_create_autocmd("BufReadPost", {
+  pattern = "*",
+  callback = function()
+    if vim.bo.filetype == "gitcommit" then
+      vim.cmd("/]:")
+      vim.cmd("startinsert!")
+    end
+  end
+})
+
+vim.api.nvim_create_autocmd("BufLeave", {
+  pattern = "*",
+  callback = function()
+    vim.notify("Test")
+    if vim.bo.filetype == "gitcommit" and vim.g.is_lazygit_opened then
+      term = GetTerminalByName("lazygit")
+      term:toggle()
+    end
+
+    if vim.bo.filetype == "vira_menu" then
+      vim.g.is_comming_from_vira = true
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*",
+  callback = function()
+    if vim.g.is_comming_from_vira and is_a_new_vira_chosen() then
+      vim.g.VIRA_ISSUE = vim.g.vira_active_issue
+      vim.notify("Set Jira Issue: " .. vim.g.VIRA_ISSUE)
+      OpenOrCreateTerminal({
+        instruction = "~/.config/nvim/update_git_branch.sh " .. vim.g.vira_active_issue,
+        name = "Update Git Branch"
+      })
+    elseif vim.g.is_comming_from_vira == false and is_a_new_vira_chosen() then -- TODO: check if works when changin branch with fugitive
+      set_vira_issue_from_branch()
+    end
+  end,
+})
+
 -- vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
 --   group = augroup("teej-automagic"),
 --   pattern = "*.go",

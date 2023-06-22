@@ -39,28 +39,6 @@ function set_vira_issue_from_branch()
   setViraIssueGlobal()
 end
 
-vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = "*",
-  callback = function()
-    if vim.g.is_comming_from_vira and is_a_new_vira_chosen() then
-      vim.g.VIRA_ISSUE = vim.g.vira_active_issue
-      vim.notify("Set Jira Issue: " .. vim.g.VIRA_ISSUE)
-      OpenOrCreateTerminal({
-        instruction = "~/.config/nvim/update_git_branch.sh " .. vim.g.vira_active_issue,
-        name = "Update Git Branch"
-      })
-    elseif vim.g.is_comming_from_vira == false and is_a_new_vira_chosen() then -- TODO: check if works when changin branch with fugitive
-      set_vira_issue_from_branch()
-    end
-  end,
-})
-vim.api.nvim_create_autocmd("BufLeave", {
-  pattern = "vira_menu",
-  callback = function()
-    vim.g.is_comming_from_vira = true
-  end,
-})
-
 return {
   -- add symbols-outline
   {
