@@ -1,6 +1,6 @@
 vim.g.vira_config_file_servers = "/home/francisco/.config/vira/vira_servers.json"
 vim.g.vira_config_file_projects = "/home/francisco/.config/vira/vira_projects.json"
-
+vim.g.is_comming_from_vira = false
 
 -- vim.api.nvim_create_autocmd("VimEnter", {
 --   callback = function()
@@ -21,15 +21,41 @@ function viraCmd(command)
 end
 
 function setViraIssueGlobal()
-  vim.notify("Vira issue: " .. vim.g.VIRA_ISSUE)
+  vim.notify("Jira Issue: " .. vim.g.VIRA_ISSUE)
   vim.g.vira_active_issue = vim.g.VIRA_ISSUE
 end
 
+function is_a_new_vira_chosen()
+  if vim.g.vira_active_issue == nil or vim.g.VIRA_ISSUE == nil then
+    return
+  end
+  return vim.g.VIRA_ISSUE ~= vim.g.vira_active_issue
+end
+
+function set_vira_issue_from_branch()
+  vim.g.VIRA_ISSUE = vim.fn.system("echo -n $(cut -d '_' -f1 <<< $(cut -d '/' -f2 <<<$(git branch --show-current)))")
+  setViraIssueGlobal()
+end
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*",
+  callback = function()
+    if vim.g.is_comming_from_vira and is_a_new_vira_chosen() then
+      vim.g.VIRA_ISSUE = vim.g.vira_active_issue
+      vim.notify("Set Jira Issue: " .. vim.g.VIRA_ISSUE)
+      OpenOrCreateTerminal({
+        instruction = "~/.config/nvim/update_git_branch.sh " .. vim.g.vira_active_issue,
+        name = "Update Git Branch"
+      })
+    elseif vim.g.is_comming_from_vira == false and is_a_new_vira_chosen() then -- TODO: check if works when changin branch with fugitive
+      set_vira_issue_from_branch()
+    end
+  end,
+})
 vim.api.nvim_create_autocmd("BufLeave", {
   pattern = "vira_menu",
   callback = function()
-    vim.g.VIRA_ISSUE = vim.g.vira_active_issue
-    vim.notify("Set vira issue: " .. vim.g.VIRA_ISSUE)
+    vim.g.is_comming_from_vira = true
   end,
 })
 
@@ -69,9 +95,7 @@ return {
       {
         "<leader>vj",
         function()
-          vim.g.vira_active_issue =
-              vim.fn.system("echo -n $(cut -d '_' -f1 <<< $(cut -d '/' -f2 <<<$(git branch --show-current)))")
-          setViraIssueGlobal()
+          set_vira_issue_from_branch()
         end,
         desc = "Set the jira issue from branch"
       },
@@ -79,7 +103,10 @@ return {
         "<leader>vb",
         function()
           setViraIssueGlobal()
-          vim.cmd("terminal ~/.config/nvim/update_git_branch.sh " .. vim.g.vira_active_issue)
+          OpenOrCreateTerminal({
+            instruction = "~/.config/nvim/update_git_branch.sh " .. vim.g.vira_active_issue,
+            name = "Update Git Branch"
+          })
         end,
         desc = "Create a branch from Jira issue"
       },

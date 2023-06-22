@@ -24,9 +24,10 @@ map('t', '<A-c>', function()
 
   vim.cmd("Git commit")
 
-  if term ~= nil then
-    term:toggle()
-  end
+  -- TODO:
+  -- if term ~= nil then
+  --   term:toggle()
+  -- end
 end)
 
 -- Quit terminal: TODO make it gracefully
