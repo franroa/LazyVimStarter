@@ -182,6 +182,27 @@ return {
         desc = "open new terminal"
       },
       {
+        "<A-n>",
+        function()
+          for _, win in ipairs(vim.api.nvim_list_wins()) do
+            local bufnr = vim.api.nvim_win_get_buf(win)
+            if vim.bo[bufnr].buftype == 'terminal' then
+              local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
+              if term == nil then
+                vim.notify('No terminals are open')
+                return
+              end
+              term.direction = "horizontal"
+              term.display_name = "fran"
+              term.name = "fran"
+              term:toggle()
+              term:toggle()
+            end
+          end
+        end,
+        desc = "toggle all to horizontal"
+      },
+      {
         "<leader>ftfh",
         function()
           for _, win in ipairs(vim.api.nvim_list_wins()) do

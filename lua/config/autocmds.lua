@@ -30,7 +30,8 @@ vim.api.nvim_create_autocmd("WinLeave", {
 vim.api.nvim_create_autocmd("BufLeave", {
   pattern = "*",
   callback = function()
-    if vim.bo.filetype == "toggleterm" then
+    if vim.bo.filetype == "toggleterm" and vim.g.has_previous_terminal_to_be_set then
+	    vim.notify("ientra")
       vim.g.previous_terminal = GetCurrentTerminal()
     end
   end,
