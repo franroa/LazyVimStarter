@@ -96,6 +96,7 @@ function OpenOrCreateTerminal(opts)
       width = function() return vim.o.columns end,
       height = function() return vim.o.lines end
     },
+    dir = opts.dir == nil and require("lazyvim.util").get_root() or opts.dir,
     direction = opts.direction == nil and 'horizontal' or opts.direction,
     hidden = false,
     close_on_exit = false,

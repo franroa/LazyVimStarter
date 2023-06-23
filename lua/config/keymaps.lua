@@ -101,7 +101,7 @@ map({ 't', 'n' }, '<A-h>', function()
 end)
 
 -- -- Get Previous Terminal
-map({ 't', 'n' }, '<A-o>', function()
+map({ 't', 'n' }, '<A-p>', function()
   if vim.g.previous_terminal then
     vim.g.has_previous_terminal_to_be_set = true
     term = GetTerminalByName(vim.g.previous_terminal.name)
@@ -125,6 +125,12 @@ end)
 map({ 't', 'n' }, '<A-t>', function()
   vim.g.has_previous_terminal_to_be_set = true
   GetCurrentOrPreviousTerminal():close()
+end)
+
+-- Open new terminal
+map({ 't', 'n' }, '<A-o>', function()
+  vim.g.has_previous_terminal_to_be_set = true
+  OpenOrCreateTerminal({ instruction = vim.o.shell, name = vim.fn.expand("%:h"), dir = vim.fn.expand("%:h") })
 end)
 
 -- Open new terminal
