@@ -19,13 +19,15 @@ function is_a_new_vira_chosen()
 end
 
 function set_vira_issue_from_branch()
-  vim.g.VIRA_ISSUE_DESCRIPTION = vim.fn.system(
-    "echo -n $(cut -d '_' -f 3- <<< $(cut -d '/' -f2 <<<$(git branch --show-current)) --output-delimiter=' ')")
-  vim.g.VIRA_ISSUE = vim.fn.system("echo -n $(cut -d '_' -f1 <<< $(cut -d '/' -f2 <<<$(git branch --show-current)))")
+  local git_path = require("functions.utils").get_git_path()
 
-  vim.notify(vim.g.VIRA_ISSUE)
-  vim.notify(vim.g.vira_active_issue)
+  vim.g.VIRA_ISSUE = vim.fn.system("echo -n $(cut -d '_' -f1 <<< $(cut -d '/' -f2 <<<$(git --git-dir=" ..
+    git_path .. "/.git branch --show-current)))")
+
   if is_a_new_vira_chosen() then
+    vim.g.VIRA_ISSUE_DESCRIPTION = vim.fn.system(
+      "echo -n $(cut -d '_' -f 3- <<< $(cut -d '/' -f2 <<<$(git --git-dir=" ..
+      git_path .. "/.git branch --show-current)) --output-delimiter=' ')")
     setViraIssueGlobal()
   end
 end

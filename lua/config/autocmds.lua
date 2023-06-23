@@ -52,8 +52,10 @@ vim.api.nvim_create_autocmd("BufEnter", {
           name = "Update Git Branch",
           direction = "horizontal"
         })
+        local git_path = require("functions.utils").get_git_path()
         vim.g.VIRA_ISSUE_DESCRIPTION = vim.fn.system(
-          "echo -n $(cut -d '_' -f 3- <<< $(cut -d '/' -f2 <<<$(git branch --show-current)) --output-delimiter=' ')")
+          "echo -n $(cut -d '_' -f 3- <<< $(cut -d '/' -f2 <<<$(git --git-dir=" ..
+          git_path .. "/.git branch --show-current)) --output-delimiter=' ')")
         vim.g.is_comming_from_vira = false
       end))
     elseif vim.g.is_comming_from_vira == false then -- TODO: check if works when changin branch with fugitive
