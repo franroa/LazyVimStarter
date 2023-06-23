@@ -16,6 +16,16 @@ end
 function GetCurrentTerminal()
   local buf_name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
   local splited_buf_name = split(buf_name, "(")
+  if splited_buf_name[2] == nil then
+    return nil
+  end
+  local term_name = "(" .. splited_buf_name[2]
+  return GetTerminalByName(term_name)
+end
+
+function GetCurrentOrPreviousTerminal()
+  local buf_name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+  local splited_buf_name = split(buf_name, "(")
 
   if splited_buf_name[2] == nil then
     if vim.g.previous_terminal then

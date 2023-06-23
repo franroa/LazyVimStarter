@@ -2,19 +2,6 @@ vim.g.vira_config_file_servers = "/home/francisco/.config/vira/vira_servers.json
 vim.g.vira_config_file_projects = "/home/francisco/.config/vira/vira_projects.json"
 vim.g.is_comming_from_vira = false
 
--- vim.api.nvim_create_autocmd("VimEnter", {
---   callback = function()
---     local timer = vim.loop.new_timer()
---     timer:start(50, 0, vim.schedule_wrap(function()
---       vim.api.nvim_command('ViraLoadProject')
---       vim.g.vira_active_issue = vim.g.VIRA_ISSUE
---       vim.notify("Jira issue: " .. vim.g.VIRA_ISSUE)
---     end))
---   end,
--- })
---
---
-
 
 function viraCmd(command)
   vim.cmd("ViraLoadProject")
@@ -23,20 +10,24 @@ function viraCmd(command)
 end
 
 function setViraIssueGlobal()
-  vim.notify("Jira Issue: " .. vim.g.VIRA_ISSUE)
+  vim.notify("Jira Issue: " .. vim.g.VIRA_ISSUE .. " - " .. vim.g.VIRA_ISSUE_DESCRIPTION)
   vim.g.vira_active_issue = vim.g.VIRA_ISSUE
 end
 
 function is_a_new_vira_chosen()
-  if vim.g.vira_active_issue == nil or vim.g.VIRA_ISSUE == nil then
-    return
-  end
   return vim.g.VIRA_ISSUE ~= vim.g.vira_active_issue
 end
 
 function set_vira_issue_from_branch()
+  vim.g.VIRA_ISSUE_DESCRIPTION = vim.fn.system(
+    "echo -n $(cut -d '_' -f 3- <<< $(cut -d '/' -f2 <<<$(git branch --show-current)) --output-delimiter=' ')")
   vim.g.VIRA_ISSUE = vim.fn.system("echo -n $(cut -d '_' -f1 <<< $(cut -d '/' -f2 <<<$(git branch --show-current)))")
-  setViraIssueGlobal()
+
+  vim.notify(vim.g.VIRA_ISSUE)
+  vim.notify(vim.g.vira_active_issue)
+  if is_a_new_vira_chosen() then
+    setViraIssueGlobal()
+  end
 end
 
 return {

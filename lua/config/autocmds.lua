@@ -20,10 +20,6 @@ vim.api.nvim_create_autocmd("WinLeave", {
       term = GetTerminalByName("(default) lazygit")
       term:toggle()
     end
-
-    if vim.bo.filetype == "vira_menu" then
-      vim.g.is_comming_from_vira = true
-    end
   end,
 })
 
@@ -32,6 +28,10 @@ vim.api.nvim_create_autocmd("BufLeave", {
   callback = function()
     if vim.bo.filetype == "toggleterm" and vim.g.has_previous_terminal_to_be_set then
       vim.g.previous_terminal = GetCurrentTerminal()
+    end
+
+    if vim.bo.filetype == "vira_menu" then
+      vim.g.is_comming_from_vira = true
     end
   end,
 })
@@ -45,11 +45,18 @@ vim.api.nvim_create_autocmd("BufEnter", {
     if vim.g.is_comming_from_vira and is_a_new_vira_chosen() then
       vim.g.VIRA_ISSUE = vim.g.vira_active_issue
       vim.notify("Set Jira Issue: " .. vim.g.VIRA_ISSUE)
-      OpenOrCreateTerminal({
-        instruction = "~/.config/nvim/update_git_branch.sh " .. vim.g.vira_active_issue,
-        name = "Update Git Branch"
-      })
-    elseif vim.g.is_comming_from_vira == false and is_a_new_vira_chosen() then -- TODO: check if works when changin branch with fugitive
+      local timer = vim.loop.new_timer()
+      timer:start(50, 0, vim.schedule_wrap(function()
+        OpenOrCreateTerminal({
+          instruction = "~/.config/nvim/update_git_branch.sh " .. vim.g.vira_active_issue,
+          name = "Update Git Branch",
+          direction = "horizontal"
+        })
+        vim.g.VIRA_ISSUE_DESCRIPTION = vim.fn.system(
+          "echo -n $(cut -d '_' -f 3- <<< $(cut -d '/' -f2 <<<$(git branch --show-current)) --output-delimiter=' ')")
+        vim.g.is_comming_from_vira = false
+      end))
+    elseif vim.g.is_comming_from_vira == false then -- TODO: check if works when changin branch with fugitive
       set_vira_issue_from_branch()
     end
   end,
@@ -63,4 +70,15 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
       vim.cmd("startinsert")
     end
   end
+})
+
+-- TODO: THis is just a work around (witing for https://github.com/neovim/neovim/pull/22865)
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'MiniFilesWindowUpdate',
+  callback = function(args) vim.wo[args.data.win_id].relativenumber = true end,
+})
+
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'FugitiveChanged',
+  callback = function() set_vira_issue_from_branch() end,
 })

@@ -30,7 +30,7 @@ map("n", 'i', function()
 end, { expr = true })
 
 
--- Git commit
+-- Git commit template navigation
 map("i", "<A-i>", function()
   vim.cmd("/^$")
   vim.cmd.stopinsert()
@@ -47,13 +47,14 @@ map({ 't', 'n' }, '<A-c>', function()
   term = GetCurrentTerminal()
   if term ~= nil then
     term:toggle()
+    vim.notify(term)
   end
 
   vim.g.is_lazygit_opened = true
   vim.cmd("Git commit")
 end)
 
--- Terminal
+-- Terminal TODO: move to toggleterm lua plugin file
 vim.g.has_previous_terminal_to_be_set = true
 
 map('t', '<esc>', [[<C-\><C-n>]])
@@ -85,13 +86,13 @@ end)
 -- Quit terminal: TODO: make it gracefully
 map({ 't', 'n' }, '<A-e>', function()
   vim.g.has_previous_terminal_to_be_set = false
-  GetCurrentTerminal():shutdown()
+  GetCurrentOrPreviousTerminal():shutdown()
 end)
 
 -- Hover current terminal
 map({ 't', 'n' }, '<A-h>', function()
   vim.g.has_previous_terminal_to_be_set = false
-  local current_term = GetCurrentTerminal()
+  local current_term = GetCurrentOrPreviousTerminal()
   for _, term in pairs(GetAllTerminals()) do
     if term.name ~= current_term.name then
       term:close()
@@ -123,7 +124,7 @@ end)
 -- Hide one terminal
 map({ 't', 'n' }, '<A-t>', function()
   vim.g.has_previous_terminal_to_be_set = true
-  GetCurrentTerminal():close()
+  GetCurrentOrPreviousTerminal():close()
 end)
 
 -- Open new terminal
@@ -140,7 +141,7 @@ end)
 -- Format current terminal
 map({ 't', 'n' }, '<A-f>', function()
   vim.g.has_previous_terminal_to_be_set = false
-  local term = GetCurrentTerminal()
+  local term = GetCurrentOrPreviousTerminal()
   if term.direction == "horizontal" then
     term.direction = "float"
   else
