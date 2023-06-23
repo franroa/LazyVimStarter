@@ -15,9 +15,24 @@ end
 
 function GetCurrentTerminal()
   local buf_name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
-  local term_name = "(" .. split(buf_name, "(")[2]
+  local splited_buf_name = split(buf_name, "(")
 
-  return GetTerminalByName(term_name)
+  if splited_buf_name[2] == nil then
+    if vim.g.previous_terminal then
+      return vim.g.previous_terminal
+    end
+    return nil
+  end
+
+  local term_name = "(" .. splited_buf_name[2]
+
+  local term = GetTerminalByName(term_name)
+
+  if term then
+    return term
+  end
+
+  return nil
 end
 
 function OpenOrCreateTerminal(opts)
@@ -111,7 +126,7 @@ return {
           -- TODO: https://github.com/mhinz/neovim-remote
           -- vim.env.GIT_EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
 
-          OpenOrCreateTerminal({ instruction = lg_cmd, name = 'lazygit', direction = 'float' })
+          OpenOrCreateTerminal({ instruction = lg_cmd, name = 'lazygit', direction = 'tab' })
         end,
         desc = "lazygit"
       },
@@ -129,142 +144,6 @@ return {
         "<leader>ftg",
         function() OpenOrCreateTerminal({ instruction = "gitlab-ci-local", name = 'gitlab-local', direction = 'float' }) end,
         desc = "gitlab local"
-      },
-      {
-        "<leader>fts",
-        "<cmd>Telescope termfinder<cr>",
-        desc = "Search terms"
-      },
-      {
-        "<leader>ftta",
-        function()
-          -- local bufnr = vim.api.nvim_get_current_buf()
-          -- local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
-          -- if term == nil and Last_terminal_open == nil then
-          --   vim.notify('No terminals are open')
-          --   return
-          -- end
-          --
-          -- if term ~= nil then
-          --   Last_terminal_open = term
-          -- end
-          --
-          -- Last_terminal_open:toggle()
-        end,
-        desc = "toggle all"
-      },
-      {
-        "<leader>ftt",
-        function()
-          local bufnr = vim.api.nvim_get_current_buf()
-          local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
-          if term == nil and Last_terminal_open == nil then
-            vim.notify('No terminals are open')
-            return
-          end
-
-          if term ~= nil then
-            Last_terminal_open = term
-          end
-
-          Last_terminal_open:toggle()
-        end,
-        desc = "toggle current terminal"
-      },
-      {
-        "<leader>ftn",
-        function()
-          ExecuteFunctionFromInput({
-            prompt = "Terminal Name",
-            fun = function(name) OpenOrCreateTerminal({ instruction = vim.o.shell, name = name }) end
-          })
-        end,
-        desc = "open new terminal"
-      },
-      {
-        "<A-n>",
-        function()
-          for _, win in ipairs(vim.api.nvim_list_wins()) do
-            local bufnr = vim.api.nvim_win_get_buf(win)
-            if vim.bo[bufnr].buftype == 'terminal' then
-              local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
-              if term == nil then
-                vim.notify('No terminals are open')
-                return
-              end
-              term.direction = "horizontal"
-              term.display_name = "fran"
-              term.name = "fran"
-              term:toggle()
-              term:toggle()
-            end
-          end
-        end,
-        desc = "toggle all to horizontal"
-      },
-      {
-        "<leader>ftfh",
-        function()
-          for _, win in ipairs(vim.api.nvim_list_wins()) do
-            local bufnr = vim.api.nvim_win_get_buf(win)
-            if vim.bo[bufnr].buftype == 'terminal' then
-              local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
-              if term == nil then
-                vim.notify('No terminals are open')
-                return
-              end
-              term.direction = "horizontal"
-              term.display_name = "fran"
-              term.name = "fran"
-              term:toggle()
-              term:toggle()
-            end
-          end
-        end,
-        desc = "toggle all to horizontal"
-      },
-      {
-        "<leader>ftff",
-        function()
-          for _, win in ipairs(vim.api.nvim_list_wins()) do
-            local bufnr = vim.api.nvim_win_get_buf(win)
-            if vim.bo[bufnr].buftype == 'terminal' then
-              local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
-              if term == nil then
-                vim.notify('No terminals are open')
-                return
-              end
-              term.direction = "float"
-              term.display_name = "fran"
-              term.name = "fran"
-              term:toggle()
-              term:toggle()
-            end
-          end
-        end,
-        desc = "toggle all to float"
-      },
-      {
-        "<leader>ftf1",
-        function()
-          --
-          -- TODO: make it working with many buffers!
-          local bufnr = vim.api.nvim_get_current_buf()
-          local _, term = require('toggleterm.terminal').identify(vim.api.nvim_buf_get_name(bufnr))
-
-          if term == nil then
-            vim.notify('No terminals are open')
-            return
-          end
-
-          if term.direction == "float" then
-            return "<cmd>ToggleTerm<cr><cmd>ToggleTerm direction=horizontal<cr>"
-          else
-            return "<cmd>ToggleTerm<cr><cmd>ToggleTerm direction=float<cr>"
-          end
-        end,
-        expr = true,
-        desc = "toggle format (horizontal/float)"
       },
     },
     version = "*",
