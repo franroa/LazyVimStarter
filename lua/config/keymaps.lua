@@ -59,7 +59,6 @@ vim.g.has_previous_terminal_to_be_set = true
 
 map('t', '<esc>', [[<C-\><C-n>]])
 map('t', '<esc>', [[<C-\><C-n>]])
-map('t', 'jk', [[<C-\><C-n>]])
 map('t', '<C-h>', function()
   vim.g.has_previous_terminal_to_be_set = true
   vim.cmd("wincmd h")
