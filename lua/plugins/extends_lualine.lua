@@ -15,6 +15,7 @@ return {
     end,
     dependencies = {
       "ecthelionvi/NeoComposer.nvim",
+      'linrongbin16/lsp-progress.nvim',
     }
   },
 }

@@ -1,6 +1,8 @@
 -- Keymaps are automatically loaded on the VeryLazy event
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
+-- TODO: https://github.com/elijahmanor/dotfiles/blob/master/nvim/.config/nvim/lua/config/autocmds.lua
+
 
 local function map(mode, lhs, rhs, opts)
   local keys = require("lazy.core.handler").handlers.keys
@@ -13,6 +15,16 @@ local function map(mode, lhs, rhs, opts)
   end
 end
 
+-- Replace word/line
+map('n', 'gsw', ':%s/<C-r><C-w>/', { desc = 'Replace word under cursor' })
+map(
+  { 'n', 'v' },
+  'gsW',
+  function()
+    return ':' .. vim.fn.line('.') .. 's/<C-r><C-w>/ /g<left><left><C-h>'
+  end,
+  { expr = true, desc = 'Replace word under cursor on current line' }
+)
 -- Visual --
 -- Stay in indent mode
 map("v", "<", "<gv", { desc = "indent with <" })
@@ -54,11 +66,23 @@ map({ 't', 'n' }, '<A-c>', function()
   vim.cmd("Git commit")
 end)
 
+
+-- TMUX TODO: learn
+vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>")
+vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>")
+vim.keymap.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>")
+vim.keymap.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>")
+vim.keymap.set("n", "<C-\\>", "<cmd>TmuxNavigatePrevious<cr>")
+
+
+
+
+
 -- Terminal TODO: move to toggleterm lua plugin file
 vim.g.has_previous_terminal_to_be_set = true
 
-map('t', '<esc>', [[<C-\><C-n>]])
-map('t', '<esc>', [[<C-\><C-n>]])
+-- map('t', '<esc>', [[<C-\><C-n>]])
+-- map('t', '<esc>', [[<C-\><C-n>]])
 map('t', '<C-h>', function()
   vim.g.has_previous_terminal_to_be_set = true
   vim.cmd("wincmd h")

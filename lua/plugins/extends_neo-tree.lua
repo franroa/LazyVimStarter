@@ -3,7 +3,34 @@ return {
   {
     "nvim-neo-tree/neo-tree.nvim",
     opts = {
+      filesystem = {
+        bind_to_cwd = false,
+        follow_current_file = true,
+        filtered_items = {
+          visible = true,
+          hide_dotfiles = false,
+          hide_gitignored = false,
+          -- hide_by_name = {
+          --   ".DS_Store",
+          --   "thumbs.db",
+          --   "node_modules",
+          -- },
+        },
+      },
       commands = {
+        open_terminal = function(state)
+          local node = state.tree:get_node() -- node in focus when keybind is pressed
+          local abs_path = node.path
+
+          local cwd = vim.fn.fnamemodify(abs_path, ":h")
+
+          OpenOrCreateTerminal({
+            non_k8s = true,
+            name = cwd,
+            dir = cwd,
+            instruction = vim.o.shell
+          })
+        end,
         execute_bash = function(state)
           -- state.path # this points to the root dir of the tree
           local node = state.tree:get_node() -- node in focus when keybind is pressed
@@ -29,6 +56,7 @@ return {
       window = {
         mappings = {
           ["B"] = "execute_bash",
+          ["o"] = "open_terminal",
         },
       },
     },

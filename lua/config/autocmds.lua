@@ -74,6 +74,22 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
   end
 })
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- TODO: THis is just a work around (witing for https://github.com/neovim/neovim/pull/22865)
 vim.api.nvim_create_autocmd('User', {
   pattern = 'MiniFilesWindowUpdate',
@@ -83,4 +99,12 @@ vim.api.nvim_create_autocmd('User', {
 vim.api.nvim_create_autocmd('User', {
   pattern = 'FugitiveChanged',
   callback = function() set_vira_issue_from_branch() end,
+})
+
+-- Disable autoformat for lua files
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  pattern = { "yaml", "yml" },
+  callback = function()
+    vim.b.autoformat = false
+  end,
 })
