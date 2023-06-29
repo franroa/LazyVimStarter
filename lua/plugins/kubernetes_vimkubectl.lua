@@ -225,6 +225,17 @@ return {
     lazy = false,
     keys = {
       {
+        "<leader>ks",
+        function()
+          OpenOrCreateTerminal({
+            instruction = "skaffold dev",
+            name = "skaffold",
+            dir = require("functions.utils").get_git_path()
+          })
+        end,
+        desc = "skaffold"
+      },
+      {
         "<leader>k9",
         function()
           OpenOrCreateTerminal({ instruction = "k9s --logoless", name = "k9s", direction = "tab" })

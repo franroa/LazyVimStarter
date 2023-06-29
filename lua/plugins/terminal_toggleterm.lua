@@ -1,4 +1,9 @@
+-- TODO: https://alpha2phi.medium.com/neovim-for-beginners-3rd-party-tools-c4a5148e501c
+-- https://alpha2phi.medium.com/neovim-for-beginners-cheatsheet-and-coding-assistant-137d5a15c934
+
 local split = require("functions.utils").split
+
+
 function GetAllTerminals()
   return require('toggleterm.terminal').get_all(true)
 end
@@ -140,6 +145,26 @@ return {
           OpenOrCreateTerminal({ instruction = lg_cmd, name = 'lazygit', direction = 'tab' })
         end,
         desc = "lazygit"
+      },
+      {
+        "<leader>ftv",
+        function() OpenOrCreateTerminal({ instruction = "visidata", name = 'visidata', direction = 'tab' }) end,
+        desc = "Visidata" -- https://github.com/ClementTsang/bottom#cargo
+      },
+      {
+        "<leader>ftw",
+        function() OpenOrCreateTerminal({ instruction = "git cz", name = 'comittizen', direction = 'tab' }) end,
+        desc = "Commitizzen" -- https://github.com/ClementTsang/bottom#cargo
+      },
+      {
+        "<leader>ftb",
+        function() OpenOrCreateTerminal({ instruction = "bottom", name = 'bottom', direction = 'tab' }) end,
+        desc = "Bottom" -- https://github.com/ClementTsang/bottom#cargo
+      },
+      {
+        "<leader>ftt",
+        function() OpenOrCreateTerminal({ instruction = "tokei", name = 'tokei', direction = 'tab' }) end,
+        desc = "tokei - Project Info"
       },
       {
         "<leader>ftd",

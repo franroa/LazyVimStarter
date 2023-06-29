@@ -1,3 +1,20 @@
+local transform_mod = require("telescope.actions.mt").transform_mod
+local nvb_actions = transform_mod {
+  -- VisiData
+  visidata = function(prompt_bufnr)
+    -- Get the full path
+    local content = require("telescope.actions.state").get_selected_entry()
+    local full_path = content.cwd .. require("plenary.path").path.sep .. content.value
+
+    -- Close the Telescope window
+    require("telescope.actions").close(prompt_bufnr)
+
+    -- Open the file with VisiData
+    OpenOrCreateTerminal({ instruction = "vd", name = "visidata" })
+  end,
+}
+
+
 return {
   {
     "nvim-telescope/telescope.nvim",
@@ -12,6 +29,30 @@ return {
     },
     -- change some options
     opts = {
+      pickers = {
+        find_files = {
+          theme = "ivy",
+          mappings = {
+            n = {
+              ["s"] = nvb_actions.visidata,
+            },
+            i = {
+              ["<C-s>"] = nvb_actions.visidata,
+            },
+          },
+        },
+        git_files = {
+          theme = "dropdown",
+          mappings = {
+            n = {
+              ["s"] = nvb_actions.visidata,
+            },
+            i = {
+              ["<C-s>"] = nvb_actions.visidata,
+            },
+          },
+        },
+      },
       defaults = {
         layout_strategy = "horizontal",
         layout_config = { prompt_position = "top" },

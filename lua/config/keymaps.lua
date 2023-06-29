@@ -67,16 +67,6 @@ map({ 't', 'n' }, '<A-c>', function()
 end)
 
 
--- TMUX TODO: learn
-vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>")
-vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>")
-vim.keymap.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>")
-vim.keymap.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>")
-vim.keymap.set("n", "<C-\\>", "<cmd>TmuxNavigatePrevious<cr>")
-
-
-
-
 
 -- Terminal TODO: move to toggleterm lua plugin file
 vim.g.has_previous_terminal_to_be_set = true
