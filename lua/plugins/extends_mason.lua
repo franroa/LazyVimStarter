@@ -6,6 +6,7 @@ return {
       { "delve", "gotests", "golangci-lint", "gofumpt", "goimports", "golangci-lint-langserver", "impl", "gomodifytags",
         "iferr", "gotestsum", "helm-ls", -- GO
         "stylua",
+        "terraform-ls", "tflint",
         "shellcheck",
         "shfmt",
         "flake8",

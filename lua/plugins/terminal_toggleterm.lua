@@ -8,46 +8,71 @@ function GetAllTerminals()
   return require('toggleterm.terminal').get_all(true)
 end
 
-function GetTerminalByName(name)
-  local terms_table = require('toggleterm.terminal').get_all(true)
-  for _, term in pairs(terms_table) do
-    if term.name == name then
-      return term
-    end
-  end
-  return nil
+function GetTerminalById(id)
+  return require("toggleterm.terminal").get(id)
+  -- local terms_table = require('toggleterm.terminal').get_all(true)
+  -- for _, term in pairs(terms_table) do
+  --   if term.name == name then
+  --     return term
+  --   end
+  -- end
+  -- return nil
 end
 
 function GetCurrentTerminal()
-  local buf_name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
-  local splited_buf_name = split(buf_name, "(")
-  if splited_buf_name[2] == nil then
-    return nil
-  end
-  local term_name = "(" .. splited_buf_name[2]
-  return GetTerminalByName(term_name)
+  return require("toggleterm.terminal").get(require("toggleterm.terminal").get_focused_id())
+  -- local buf_name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+  -- local splited_buf_name = split(buf_name, "(")
+  -- if splited_buf_name[2] == nil then
+  --   return nil
+  -- end
+  -- local term_name = "(" .. splited_buf_name[2]
+  -- local current_term = GetTerminalByName(term_name)
+  -- if current_term == nil then
+  -- end
 end
 
 function GetCurrentOrPreviousTerminal()
-  local buf_name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
-  local splited_buf_name = split(buf_name, "(")
-
-  if splited_buf_name[2] == nil then
+  local focused_term = require("toggleterm.terminal").get_focused_id()
+  if focused_term == nil then
     if vim.g.previous_terminal then
       return vim.g.previous_terminal
     end
     return nil
   end
 
-  local term_name = "(" .. splited_buf_name[2]
+  return require("toggleterm.terminal").get(focused_term)
+  -- local buf_name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+  -- local splited_buf_name = split(buf_name, "(")
+  --
+  -- if splited_buf_name[2] == nil then
+  --   if vim.g.previous_terminal then
+  --     return vim.g.previous_terminal
+  --   end
+  --   return nil
+  -- end
+  --
+  -- local term_name = "(" .. splited_buf_name[2]
+  --
+  -- local term = GetTerminalByName(term_name)
+  --
+  -- if term then
+  --   return term
+  -- end
+  --
+  -- return nil
+end
 
-  local term = GetTerminalByName(term_name)
-
-  if term then
-    return term
+function GetWindowsOfOpenedTerminals()
+  local terms_table = GetAllTerminals()
+  local tab = {}
+  for _, term in pairs(terms_table) do
+    vim.notify(tostring(term:is_open()))
+    if term:is_open() then
+      table.insert(tab, term.window)
+    end
   end
-
-  return nil
+  return tab
 end
 
 function OpenOrCreateTerminal(opts)
@@ -63,7 +88,7 @@ function OpenOrCreateTerminal(opts)
     display_name = "k9s"
   end
 
-  local term = GetTerminalByName(new_name)
+  local term = GetTerminalById(new_name)
   if term ~= nil then
     vim.notify("There is already a terminal with that name!", "warning")
     for _, other_term in pairs(GetAllTerminals()) do
@@ -96,11 +121,11 @@ function OpenOrCreateTerminal(opts)
       vim.api.nvim_buf_set_name(term.bufnr, new_name)
     end,
     cmd = cmd,
-    float_opts = {
-      border = "double",
-      width = function() return vim.o.columns end,
-      height = function() return vim.o.lines end
-    },
+    -- float_opts = {
+    --   border = "double",
+    --   width = function() return vim.o.columns end,
+    --   height = function() return vim.o.lines end
+    -- },
     dir = opts.dir == nil and require("lazyvim.util").get_root() or opts.dir,
     direction = opts.direction == nil and 'horizontal' or opts.direction,
     hidden = false,

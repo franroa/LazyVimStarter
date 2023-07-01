@@ -91,6 +91,8 @@ map('t', '<C-l>', function()
 end)
 map('t', '<C-w>', [[<C-\><C-n><C-w>]])
 
+map({ 't' }, '<C-Up>', [[<C-\><C-n>]])
+map({ 't' }, '<C-Down>', [[<C-\><C-n>]])
 
 map({ 't', 'n' }, '<A-s>', function()
   vim.cmd("Telescope termfinder")
@@ -104,6 +106,7 @@ end)
 
 -- Hover current terminal
 map({ 't', 'n' }, '<A-h>', function()
+  vim.notify("Test")
   vim.g.has_previous_terminal_to_be_set = false
   local current_term = GetCurrentOrPreviousTerminal()
   for _, term in pairs(GetAllTerminals()) do
@@ -113,11 +116,22 @@ map({ 't', 'n' }, '<A-h>', function()
   end
 end)
 
--- -- Get Previous Terminal
+function GetPreviousTerminal()
+  if vim.g.previous_terminal then
+    vim.g.has_previous_terminal_to_be_set = true
+    term = GetTerminalById(vim.g.previous_terminal.id)
+    if term:is_open() then
+      term:focus()
+      return
+    end
+    term:toggle()
+  end
+end
+
 map({ 't', 'n' }, '<A-p>', function()
   if vim.g.previous_terminal then
     vim.g.has_previous_terminal_to_be_set = true
-    term = GetTerminalByName(vim.g.previous_terminal.name)
+    term = GetTerminalById(vim.g.previous_terminal.id)
     if term:is_open() then
       term:focus()
       return

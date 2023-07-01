@@ -22,7 +22,7 @@ return {
       -- add a keymap to browse plugin files
       -- stylua: ignore
       {
-        "<leader>fp",
+        "<leader>fP",
         function() require("telescope.builtin").find_files({ cwd = require("lazy.core.config").options.root }) end,
         desc = "Find Plugin File",
       },

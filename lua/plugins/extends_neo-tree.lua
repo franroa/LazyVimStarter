@@ -3,6 +3,26 @@ return {
   {
     "nvim-neo-tree/neo-tree.nvim",
     opts = {
+      event_handlers = {
+
+        {
+          event = "neo_tree_window_after_open",
+          handler = function()
+            if vim.g.should_track_neotree_window then
+              vim.g.was_neotree_manually_opened = true
+            end
+          end
+        },
+        {
+          event = "neo_tree_window_after_close",
+          handler = function()
+            if vim.g.should_track_neotree_window then
+              vim.g.was_neotree_manually_opened = false
+            end
+          end
+        },
+
+      },
       filesystem = {
         bind_to_cwd = false,
         follow_current_file = true,

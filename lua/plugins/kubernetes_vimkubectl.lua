@@ -165,7 +165,7 @@ local function clean_terminals()
     if term.display_name == "k9s" then
       local isOpen = term:is_open()
       term:shutdown()
-      term = OpenOrCreateTerminal({ instruction = "k9s --logoless", name = "k9s", direction = 'tab' })
+      term = OpenOrCreateTerminal({ instruction = "k9s --logoless", name = "k9s", direction = 'float' })
       if isOpen == false then
         term:toggle()
       end
@@ -238,7 +238,7 @@ return {
       {
         "<leader>k9",
         function()
-          OpenOrCreateTerminal({ instruction = "k9s --logoless", name = "k9s", direction = "tab" })
+          OpenOrCreateTerminal({ instruction = "k9s --logoless", name = "k9s", direction = "float" })
         end,
         desc = "Open k9s"
       },

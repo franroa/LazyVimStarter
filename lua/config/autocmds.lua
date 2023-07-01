@@ -13,11 +13,46 @@ vim.api.nvim_create_autocmd("VimLeave", {
   end,
 })
 
+-- Resize Toggleterm
+vim.g.is_comming_from_toggleterm_window = false
+vim.g.previous_toggleterm_edgy_window = nil
+vim.api.nvim_create_autocmd("WinLeave", {
+  callback = function()
+    if vim.bo.filetype == 'toggleterm' and vim.g.is_comming_from_toggleterm_window == false then
+      resize_all_windows(-30)
+    end
+  end,
+})
+
+function resize_all_windows(height)
+  local terms_table = GetAllTerminals()
+  for _, term in pairs(terms_table) do
+    if term:is_open() then
+      require("edgy").get_win(term.window):resize("height", height)
+    end
+  end
+end
+
+vim.api.nvim_create_autocmd("WinEnter", {
+  callback = function()
+    if vim.bo.filetype == 'toggleterm' then
+      if vim.g.is_comming_from_toggleterm_window then
+        vim.g.is_comming_from_toggleterm_window = true
+        return
+      end
+      -- If I am entering a toggleterm from other filetype
+      resize_all_windows(30)
+      return
+    end
+    vim.g.is_comming_from_toggleterm_window = false
+  end,
+})
+
 vim.api.nvim_create_autocmd("WinLeave", {
   pattern = "*",
   callback = function()
     if vim.bo.filetype == "gitcommit" and vim.g.is_lazygit_opened then
-      term = GetTerminalByName("(default) lazygit")
+      term = GetTerminalById("(default) lazygit")
       term:toggle()
     end
   end,
@@ -71,6 +106,29 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
     if vim.bo.filetype == 'toggleterm' then
       vim.cmd("startinsert")
     end
+  end
+})
+
+
+
+-- TODO: this is not working when the focus is on neotree
+vim.g.should_track_neotree_window = true
+vim.g.was_neotree_manually_opened = false
+vim.g.min_width_to_show_explorer = 75
+vim.api.nvim_create_autocmd({ "VimResized" }, {
+  pattern = "*",
+  callback = function()
+    if vim.g.was_neotree_manually_opened == false then
+      return
+    end
+
+    vim.g.should_track_neotree_window = false
+    if vim.api.nvim_win_get_width(vim.api.nvim_get_current_win()) <= vim.g.min_width_to_show_explorer then
+      require("neo-tree").close_all()
+    else
+      require("neo-tree").focus()
+    end
+    vim.g.should_track_neotree_window = true
   end
 })
 
