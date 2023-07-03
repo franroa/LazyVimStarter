@@ -2,6 +2,13 @@ return {
   {
     "Bekaboo/dropbar.nvim",
     event = "VeryLazy",
+    keys = {
+      {
+        "<leader>ub",
+        function() require('dropbar.api').pick() end,
+        desc = "Dropbar Pick mode",
+      },
+    },
     opts = function(_, opts)
       require("functions.winbar").UpdateGlobalValues()
       require("functions.winbar").UpdateDevIconsInDropbar()

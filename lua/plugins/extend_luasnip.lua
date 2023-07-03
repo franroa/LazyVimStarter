@@ -27,8 +27,17 @@ return {
 
       local luasnip = require("luasnip")
       local cmp = require("cmp")
-
-      opts.sources = cmp.config.sources(vim.list_extend(opts.sources, { { name = "emoji" }, { name = "cmdline" } }))
+      -- opts.formatting = {
+      --   format = function(_, item)
+      --     local icons = require("lazyvim.config").icons.kinds
+      --     if icons[item.kind] then
+      --       item.kind = icons[item.kind] .. item.kind
+      --     end
+      --     return item
+      --   end,
+      -- }
+      opts.sources = cmp.config.sources(vim.list_extend(opts.sources,
+        { { name = "emoji" }, { name = "cmdline" }, { name = "codeium" } }))
       opts.mapping = vim.tbl_extend("force", opts.mapping, {
         ['<Tab>'] = function(fallback)
           if cmp.visible() then
